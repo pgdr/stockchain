@@ -24,7 +24,7 @@ def main():
     transaction = test_transaction(msg, u1, u2)
 
     # setup blockchain
-    problem = '00000'
+    problem = '0000'
     genesis = Block.mine(0, 'genesis', problem)
     chain = [genesis]
 
