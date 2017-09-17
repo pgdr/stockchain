@@ -1,0 +1,36 @@
+#!/usr/bin/env python
+from __future__ import print_function
+
+from stockchain import User, Message, verify_transaction
+from stockchain import Block, print_chain, chain_valid
+from stockchain import Transaction
+
+def test_transaction(msg, u1, u2):
+    msg_str = msg.to_string()
+
+    signed = u1.sign(msg_str)         # privately performed
+    double_signed = u2.sign(signed)   # privately performed
+
+    transaction = Transaction(msg, signed, double_signed, u1, u2)
+    verify_transaction(transaction)
+    return transaction
+
+
+def main():
+    u1 = User('pgdr')
+    u2 = User('jokva')
+
+    msg = Message.create_message('Sell', 'STO', 100, 152.3)
+    transaction = test_transaction(msg, u1, u2)
+
+    # setup blockchain
+    problem = '00000'
+    genesis = Block.mine(0, 'genesis', problem)
+    chain = [genesis]
+
+    pre = chain[-1].hash()
+    chain.append(Block.mine(pre, repr(transaction), problem))
+    print_chain(chain)
+
+if __name__ == '__main__':
+    main()
