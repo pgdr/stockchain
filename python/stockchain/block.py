@@ -1,6 +1,7 @@
 from sys import stderr
 from json import dumps
-from hashlib import sha256
+
+from .util import sha
 
 class Block:
 
@@ -29,9 +30,8 @@ class Block:
                 return True
         return False
 
-
     def hash(self):
-        return sha256(repr(self)).hexdigest()
+        return sha(repr(self))
 
     def is_valid(self):
         return self.pfx == self.hash()[:len(self.pfx)]
@@ -46,6 +46,11 @@ class Block:
         return repr(self.content())
 
 
+
+def collect_messages(chain):
+    return [block.msg for block in chain if block.pre]  # skips genesis
+
+
 def chain_valid(chain):
     for i in range(len(chain)-1):
         if chain[i].hash() != chain[i+1].pre:
@@ -53,9 +58,10 @@ def chain_valid(chain):
     return True
 
 def print_chain(chain):
-    print('\n\n==========================\n')
+    size = len(chain)
+    print('\n\n=========== BLOCKCHAIN, size=%d =============' % size)
     for b in chain:
         print(b)
         print('\n')
-    print('\n\n==========================\n')
+    print('============================================\n')
     print('Chain %s' % 'valid' if chain_valid(chain) else 'invalid!')

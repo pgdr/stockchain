@@ -1,23 +1,22 @@
-#!/usr/bin/env python
-
-import rsa
-from base64 import b64encode, b64decode
+import util
 
 class User(object):
-    def __init__(self, name='', keysize=1024): # set to 2048
+    def __init__(self, name='', keysize=1024):
         self.name = name
-        self.pub, self.priv = self.generate(keysize)
+        self.__pub, self.__priv = util.generate(keysize=keysize)
 
-    @staticmethod
-    def generate(keysize):
-        return rsa.newkeys(keysize)
-
-    def sign(self, msg, method='SHA-512'):
-        return b64encode(rsa.sign(msg, self.priv, method))
+    def sign(self, msg):
+        return util.encode(msg, self.__priv)
 
     @property
     def public(self):
-        return self.pub
+        return self.__pub
+
+    @property
+    def short(self):
+        return '%s:%s' % (util.sha(str(self.public.n)), self.public.e)
 
     def __repr__(self):
-        return 'User: %s, (%s)' % (self.name, self.pub)
+        #return 'User: %s, (%s)' % (self.name, self.public)
+        #def __str__(self):
+        return 'User(%s/%s)' % (self.short, self.name)

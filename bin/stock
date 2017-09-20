@@ -2,7 +2,7 @@
 from __future__ import print_function
 
 from stockchain import User, Message, verify_transaction
-from stockchain import Block, print_chain, chain_valid
+from stockchain import Block, print_chain, chain_valid, collect_messages
 from stockchain import Transaction
 
 def test_transaction(msg, u1, u2):
@@ -31,6 +31,8 @@ def main():
     pre = chain[-1].hash()
     chain.append(Block.mine(pre, repr(transaction), problem))
     print_chain(chain)
+
+    print(map(Transaction.parse, collect_messages(chain)))
 
 if __name__ == '__main__':
     main()
