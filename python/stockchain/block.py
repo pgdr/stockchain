@@ -5,21 +5,21 @@ from .util import sha
 
 class Chain(object):
 
-    def __init__(self):
-        self.problem = '0000'
+    def __init__(self, problem='0000'):
+        self.problem = problem
         self.genesis = Block.mine(0, 'genesis', self.problem)
         self.chain = [self.genesis]
-
-
-    def collect_messages(self):
-        return [block.msg for block in self.chain if block.pre]  # skips genesis
-
 
     def __len__(self):
         return len(self.chain)
 
     def __getitem__(self, i):
         return self.chain[i]
+
+
+    @property
+    def messages(self):
+        return [block.msg for block in self.chain if block.pre]  # skips genesis
 
     @property
     def valid(self):

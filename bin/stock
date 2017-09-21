@@ -1,36 +1,37 @@
 #!/usr/bin/env python
 from __future__ import print_function
 
-from stockchain import User, Message, verify_transaction
+from stockchain import User, Message
 from stockchain import Chain, Block
 from stockchain import Transaction
 
-def test_transaction(msg, u1, u2):
-    msg_str = msg.to_string()
-
-    signed = u1.sign(msg_str)         # privately performed
-    double_signed = u2.sign(signed)   # privately performed
-
-    transaction = Transaction(msg, signed, double_signed, u1, u2)
-    verify_transaction(transaction)
-    return transaction
-
 
 def main():
-    u1 = User('pgdr')
-    u2 = User('jokva')
-    msg = Message.create_message('Sell', 'STO', 100, 152.3)
-    transaction = test_transaction(msg, u1, u2)
-
     # setup blockchain
     chain = Chain()
+    u0 = User('root')
 
+    u1 = User('pgdr')
+    u2 = User('jokva')
+    # TODO add users to chain
+    print(u1.public.n, u1.public.e)
+    msg = Message.create('adduser', u1.name, u1.public.n, u1.public.e)
+    transaction = Transaction.create(msg, u0, u0)
+    chain.append(transaction)
+    msg = Message.create('adduser', u2.name, u2.public.n, u2.public.e)
+    transaction = Transaction.create(msg, u0, u0)
+    chain.append(transaction)
 
+    msg = Message.create('sell', 'STO', 100, 152.3)
+    transaction = Transaction.create(msg, u1, u2)
+    chain.append(transaction)
+
+    msg = Message.create('buy', 'GOOG', 1000, 352.3)
+    transaction = Transaction.create(msg, u1, u2)
     chain.append(transaction)
 
     print(chain)
-
-    print(map(Transaction.parse, chain.collect_messages()))
+    print(map(Transaction.parse, chain.messages))
 
 if __name__ == '__main__':
     main()

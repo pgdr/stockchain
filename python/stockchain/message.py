@@ -14,7 +14,7 @@ class Message(object):
         return self.action, self.stock, self.amount, self.price, self.cre, self.exp
 
     @staticmethod
-    def create_message(action, stock, amount, price):
+    def create(action, stock, amount, price):
         created, expires =util.now_and_later(hours=1)
         return Message('%s!%s!%d!%.3f!%s!%s' % (action,
                                              stock,

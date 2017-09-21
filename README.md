@@ -26,8 +26,8 @@ a pointer back to a previous block.
 ## Transactions
 
 A transaction is either
-* `Buy (STOCK, amount, price_per_stock, creation, expiration)`, or
-* `Sell(STOCK, amount, price_per_stock, creation, expiration)`,
+* `buy (STOCK, amount, price_per_stock, creation, expiration)`, or
+* `sell(STOCK, amount, price_per_stock, creation, expiration)`,
 each comes with a signature by the originator, and with the implicit promise
 that the originator either has the necessary amount of money, or the necessary
 amount of stocks, respectively.
