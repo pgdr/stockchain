@@ -3,7 +3,49 @@ from json import dumps
 
 from .util import sha
 
-class Block:
+class Chain(object):
+
+    def __init__(self):
+        self.problem = '0000'
+        self.genesis = Block.mine(0, 'genesis', self.problem)
+        self.chain = [self.genesis]
+
+
+    def collect_messages(self):
+        return [block.msg for block in self.chain if block.pre]  # skips genesis
+
+
+    def __len__(self):
+        return len(self.chain)
+
+    def __getitem__(self, i):
+        return self.chain[i]
+
+    @property
+    def valid(self):
+        for i in range(len(self)-1):
+            if self[i].hash() != self[i+1].pre:
+                return False
+        return True
+
+    def __str__(self):
+        size = len(self)
+        s = ''
+        s += '\n\n=========== BLOCKCHAIN, size=%d =============' % size
+        for b in self:
+            s += str(b)
+            s += '\n'
+        s += '============================================\n'
+        s += 'Chain %s' % 'valid' if self.valid else 'invalid!'
+        return s
+
+    def append(self, obj):
+        pre = self[-1].hash()
+        self.chain.append(Block.mine(pre, repr(obj), self.problem))
+
+
+
+class Block(object):
 
     def __init__(self, pre, msg, nonce, pfx):
         self.pre = pre
@@ -44,24 +86,3 @@ class Block:
 
     def __repr__(self):
         return repr(self.content())
-
-
-
-def collect_messages(chain):
-    return [block.msg for block in chain if block.pre]  # skips genesis
-
-
-def chain_valid(chain):
-    for i in range(len(chain)-1):
-        if chain[i].hash() != chain[i+1].pre:
-            return False
-    return True
-
-def print_chain(chain):
-    size = len(chain)
-    print('\n\n=========== BLOCKCHAIN, size=%d =============' % size)
-    for b in chain:
-        print(b)
-        print('\n')
-    print('============================================\n')
-    print('Chain %s' % 'valid' if chain_valid(chain) else 'invalid!')
