@@ -16,6 +16,12 @@ class Chain(object):
     def __getitem__(self, i):
         return self.chain[i]
 
+    def __add__(self, other):
+        # TODO add all transactions, return dict
+        pass
+    def __radd__(self, other):
+        # TODO add if transaction or dict
+        pass
 
     @property
     def messages(self):
